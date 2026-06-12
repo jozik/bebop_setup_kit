@@ -1,0 +1,15 @@
+# Render outputs from smoke tests
+test/*.html
+test/*_files/
+test/smoke_out.ipynb
+test/smoke_r_out.ipynb
+test/Rplots.pdf
+
+# Backups created by the installer
+*.bak.*
+
+# Editor / OS junk
+.DS_Store
+*.swp
+.ipynb_checkpoints/
+__pycache__/
