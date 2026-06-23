@@ -1,6 +1,10 @@
 # Running Claude Code on LCRC Bebop via argo-shim
 
-This guide walks through setting up `argo-shim` on LCRC Bebop so you can use Claude Code (CLI and the VS Code plugin) against Argonne GCE resources. Sections 1–6 cover the **login-node** workflow; Section 7 extends it to running Claude Code on a **compute node** through a tunneled `argo-shim`.
+This guide walks through setting up `argo-shim` on LCRC Bebop so you can use Claude Code (CLI and the VS Code plugin) through Argonne GCE resources. Sections 1–6 cover the **login-node** workflow. Once you've tested that Claude works via command line and the VSCode plugin, Section 7 extends the setup to how you will most often use this capability on a **compute node**.
+
+## Summary
+- You will set up two tmux sessions (these are persistent sessions that will run on a bebop login node).
+- Then, whenever you need to invoke Claude to do analysis on a compute node, you'll submit a job to grab a dis condo node and ssh into that via VSCode's Remote capability.
 
 ## Prerequisites
 
