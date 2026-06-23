@@ -1,4 +1,4 @@
-# bebop_setup_kit
+# Bebop Setup Kit
 
 A collection of user-space setup kits for working on Argonne's LCRC **Bebop** cluster:
 development environments, VSCode Remote-SSH workflows, and running Claude Code against
