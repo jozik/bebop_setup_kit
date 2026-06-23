@@ -25,11 +25,19 @@ Time: ~15 minutes the first time (mostly conda download/install). Re-running is 
 ## 2. Run the installer
 
 From inside an SSH session on Bebop (a plain `ssh bebop` terminal is fine, you don't
-need VSCode yet):
+need VSCode yet). The kit is already in the shared EMEWS project space, so you can run
+it in place — the installer only writes to your `$HOME`:
+
+```bash
+cd /lcrc/project/EMEWS/bebop_setup_kit/r-quarto-jupyter
+bash setup_bebop_env.sh
+```
+
+Off Bebop, or to keep your own copy, clone it instead:
 
 ```bash
 git clone https://github.com/jozik/bebop_setup_kit.git ~/bebop_setup_kit
-cd ~/bebop_setup_kit
+cd ~/bebop_setup_kit/r-quarto-jupyter
 bash setup_bebop_env.sh
 ```
 
@@ -67,7 +75,8 @@ re-run after a partial failure or after updates to this kit.
 ## 3. Verify in VSCode
 
 Open VSCode locally → **Remote-SSH: Connect to Host…** → `bebop`. Open the
-`~/bebop_setup_kit/test/` folder.
+`/lcrc/project/EMEWS/bebop_setup_kit/r-quarto-jupyter/test/` folder (or
+`~/bebop_setup_kit/r-quarto-jupyter/test/` if you cloned your own copy).
 
 **Important first step:** **Reload the window**
 (`Cmd/Ctrl+Shift+P` → `Developer: Reload Window`). The freshly-installed

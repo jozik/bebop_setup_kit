@@ -1,9 +1,13 @@
 # Render outputs from smoke tests
-test/*.html
-test/*_files/
-test/smoke_out.ipynb
-test/smoke_r_out.ipynb
-test/Rplots.pdf
+r-quarto-jupyter/test/*.html
+r-quarto-jupyter/test/*_files/
+r-quarto-jupyter/test/smoke_out.ipynb
+r-quarto-jupyter/test/smoke_r_out.ipynb
+r-quarto-jupyter/test/Rplots.pdf
+
+# PBS job output/error logs (argo-shim submit jobs land here when run in place)
+*.o[0-9]*
+*.e[0-9]*
 
 # Backups created by the installer
 *.bak.*

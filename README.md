@@ -1,37 +1,29 @@
 # bebop_setup_kit
 
-User-space setup for working with `.Rmd`, `.qmd`, and `.ipynb` files on
-Argonne's Bebop cluster via VSCode Remote-SSH.
+A collection of user-space setup kits for working on Argonne's LCRC **Bebop** cluster:
+development environments, VSCode Remote-SSH workflows, and running Claude Code against
+Argonne GCE resources via `argo-shim`.
 
-Installs into your `$HOME` only — no admin required:
+On Bebop the kit lives in the shared EMEWS project space, so you can use it in place —
+**no clone required**:
 
-- conda-forge R 4.5 with full graphics stack (Cairo, png, svglite, ragg, httpgd)
-- Python 3 + Jupyter + IRkernel
-- Quarto 1.9.38 (renders both `.qmd` and `.Rmd`)
-- VSCode Machine settings + extensions (`reditorsupport.r`, `quarto.quarto`,
-  `ms-toolsai.jupyter`) for inline plots, Workspace Viewer, kernel pickers
-
-## Quick start
-
-```bash
-ssh bebop
-git clone https://github.com/jozik/bebop_setup_kit.git ~/bebop_setup_kit
-cd ~/bebop_setup_kit
-bash setup_bebop_env.sh
+```
+/lcrc/project/EMEWS/bebop_setup_kit
 ```
 
-Then open VSCode locally → Remote-SSH to `bebop` → reload window → follow
-[SETUP.md §3](SETUP.md#3-verify-in-vscode) to verify the GUI workflows.
+Off Bebop, or to keep your own copy, clone it:
 
-## Files
+```bash
+git clone https://github.com/jozik/bebop_setup_kit.git
+```
 
-- [`SETUP.md`](SETUP.md) — full walkthrough (prerequisites, install, VSCode
-  verification, daily cheat sheet, troubleshooting)
-- [`setup_bebop_env.sh`](setup_bebop_env.sh) — idempotent shell installer
-- [`merge_vscode_settings.py`](merge_vscode_settings.py) — JSON merger for
-  `~/.vscode-server/data/Machine/settings.json` (invoked by the shell script)
-- [`test/`](test/) — `smoke.qmd`, `smoke.Rmd`, `smoke.ipynb` for verifying
-  the install end-to-end
+## Contents
+
+| Directory | What it's for |
+| --- | --- |
+| [`r-quarto-jupyter/`](r-quarto-jupyter/) | User-space R 4.5 + Python + Quarto + Jupyter environment wired up to VSCode Remote-SSH for `.Rmd` / `.qmd` / `.ipynb` workflows. Start with its [README](r-quarto-jupyter/README.md) / [SETUP](r-quarto-jupyter/SETUP.md). |
+| [`claude-on-lcrc/`](claude-on-lcrc/) | Guide for running Claude Code (CLI + VSCode plugin) on Bebop via `argo-shim`, including the compute-node tunnel workflow. See [claude-on-lcrc.md](claude-on-lcrc/claude-on-lcrc.md). |
+| [`agent-bits/`](agent-bits/) | Batch scripts (`argo-shim.qsub` + `submit-argo-shim.sh`) to run `argo-shim` on a Bebop compute node. See its [README](agent-bits/README.md). |
 
 ## Questions
 

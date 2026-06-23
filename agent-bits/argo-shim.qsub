@@ -1,0 +1,57 @@
+#!/bin/bash
+#PBS -N argo-shim-compute
+#PBS -A g-DIS
+#PBS -q dis
+#PBS -l select=1:ncpus=36
+#PBS -l walltime=24:00:00
+#PBS -j oe
+
+# Batch equivalent of the interactive setup:
+#   qsub -I -A g-DIS -l select=1:ncpus=36,walltime=24:00:00 -q dis
+#   source ~/argovenv/bin/activate
+#   argo-shim --tunnel-host <login-node> --port <PORT> --tunnel-port <PORT+1>
+#
+# The login node hosting the argo-shim tunnel is passed in via the environment
+# (TUNNEL_HOST). It must be the Bebop login node where your tunneled argo-shim
+# is running, i.e. one of:
+#   beboplogin<N>.lcrc.anl.gov  (N = 1..5)
+# Use the submit-argo-shim.sh wrapper, which sets it from its first argument, or
+# submit directly with:
+#   qsub -v TUNNEL_HOST=beboplogin<N>.lcrc.anl.gov argo-shim.qsub
+#
+# Ports are derived from the username the same way argo-shim does internally
+# (sha256(username) -> 10000-32767), so this script works for any user without
+# editing. CELS_USERNAME takes precedence over the OS username, matching the
+# tool. The tunnel port is listen+1 so a compute-node shim can coexist with a
+# login-node tunnel (which uses listen-1).
+
+# Require the login node to tunnel back to (no hardcoded default). Must be the
+# beboplogin<N>.lcrc.anl.gov (N = 1..5) that runs your tunnel.
+: "${TUNNEL_HOST:?not set. Submit via submit-argo-shim.sh <login-node-host> (e.g. beboplogin5.lcrc.anl.gov), or qsub -v TUNNEL_HOST=beboplogin<N>.lcrc.anl.gov argo-shim.qsub}"
+
+# Report the DIS condo node this job landed on.
+NODE="$(hostname -f)"
+echo "==============================================="
+echo "argo-shim running on DIS condo node: ${NODE}"
+echo "PBS job id: ${PBS_JOBID}"
+echo "nodes allocated:"
+cat "${PBS_NODEFILE}"
+echo "==============================================="
+
+# Drop the node name where it's easy to find from the login node.
+echo "${NODE}" > "${HOME}/argo-shim-node.txt"
+
+# Load the environment and start argo-shim (long-running tunnel).
+source "${HOME}/argovenv/bin/activate"
+
+# Derive the listen port from the username, exactly as argo-shim does.
+PORT="$(python - <<'PY'
+import hashlib, getpass, os
+u = os.environ.get("CELS_USERNAME", getpass.getuser())
+print(10000 + (int(hashlib.sha256(u.encode()).hexdigest()[:8], 16) % 22768))
+PY
+)"
+TUNNEL_PORT="$((PORT + 1))"
+echo "argo-shim ports: listen=${PORT} tunnel=${TUNNEL_PORT}"
+
+argo-shim --tunnel-host "${TUNNEL_HOST}" --port "${PORT}" --tunnel-port "${TUNNEL_PORT}"
