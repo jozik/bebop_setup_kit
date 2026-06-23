@@ -183,7 +183,7 @@ The script submits the batch job, waits for it to start, and prints the compute 
 argo-shim node: dis-00NN
 ```
 
-**Note that hostname** — you'll need it for the SSH config below (it's also written to `~/argo-shim-node.txt`). The script derives the same ports the login-node tunnel uses, so the two ends connect automatically — there are no port numbers to set by hand on the compute side. Adjust the account/queue/walltime in [`agent-bits/argo-shim.qsub`](../agent-bits/argo-shim.qsub) if your allocation differs.
+**Note that hostname** — you'll need it for the SSH config below (it's also written to `~/argo-shim-node.txt`). The script derives the same ports the login-node tunnel uses, so the two ends connect automatically — there are no port numbers to set by hand on the compute side. If you've cloned your own copy of the repository you can adjust the account/queue/walltime in [`agent-bits/argo-shim.qsub`](../agent-bits/argo-shim.qsub) if your allocation differs.
 
 ### Add an SSH config entry for the compute node
 
