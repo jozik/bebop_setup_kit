@@ -95,16 +95,10 @@ Ports are derived per-user automatically — nothing to set by hand on the compu
 
 ## Hands-on demonstration {.smaller}
 
-Putting it together — what we'll walk through live:
+Same order as the slides (prereqs: GCE account + LCRC SSH key; VSCode Remote-SSH into Bebop):
 
-0. **Pre-requisites** - GCE account, SSH key on LCRC for accessing Argonne GCE
-1. **Connect** — VSCode Remote-SSH into Bebop
-2. **Analysis env** — open a `.qmd` / `.ipynb`, render a plot inline
-3. **argo-shim** — reattach the tmux session, confirm health checks
-4. **Quick test** — launch Claude via the star icon on the login node, confirm it works
-5. **Compute node (the real workflow)** — submit via `agent-bits`, connect to `bcn`, work here
+1. **`r-quarto-jupyter`** — run `setup_bebop_env.sh`, open a `.qmd` / `.ipynb`, render a plot inline
+2. **`claude-on-lcrc`** — reattach the `argo-shim` tmux session, confirm `✅`, smoke-test Claude via the star icon
+3. **`agent-bits`** — submit with `submit-argo-shim.sh`, connect to `bcn`, do real work (env **and** Claude both here)
 
-**Resources**
-- Repo: `github.com/jozik/bebop_setup_kit`
-- In place on Bebop: `/lcrc/project/EMEWS/bebop_setup_kit`
-- Questions: jozik@anl.gov
+**Resources** — repo `github.com/jozik/bebop_setup_kit` · on Bebop `/lcrc/project/EMEWS/bebop_setup_kit` · jozik@anl.gov
