@@ -194,7 +194,7 @@ merge_vscode_settings() {
 install_vscode_extensions() {
   step "VSCode extensions (Remote-SSH host)"
   local code_cli
-  code_cli=$(find "$HOME/.vscode-server/bin" -maxdepth 3 -path '*/bin/remote-cli/code' 2>/dev/null | sort | tail -1)
+  code_cli=$(find "$HOME/.vscode-server/bin" -maxdepth 4 -path '*/bin/remote-cli/code' 2>/dev/null | sort | tail -1)
   if [[ -z "$code_cli" ]]; then
     log "[warn] no VSCode remote CLI found under ~/.vscode-server/bin/*/bin/remote-cli/code"
     log "       This is expected if you've never opened VSCode Remote-SSH on this host yet."
