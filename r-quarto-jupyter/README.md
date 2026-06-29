@@ -1,4 +1,4 @@
-# bebop_setup_kit
+# r-quarto-jupyter
 
 User-space setup for working with `.Rmd`, `.qmd`, and `.ipynb` files on
 Argonne's Bebop cluster via VSCode Remote-SSH.

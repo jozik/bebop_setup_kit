@@ -5,6 +5,13 @@ r-quarto-jupyter/test/smoke_out.ipynb
 r-quarto-jupyter/test/smoke_r_out.ipynb
 r-quarto-jupyter/test/Rplots.pdf
 
+# Quarto render artifacts (qmd/Rmd -> html/pdf + supporting dirs)
+tutorial/*.html
+tutorial/*.pdf
+tutorial/*_files/
+.quarto/
+/_site/
+
 # PBS job output/error logs (argo-shim submit jobs land here when run in place)
 *.o[0-9]*
 *.e[0-9]*

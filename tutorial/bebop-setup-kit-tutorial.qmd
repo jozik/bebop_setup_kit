@@ -1,0 +1,110 @@
+---
+title: "Bebop Setup Kit"
+subtitle: "Group tutorial — dev environments, VSCode Remote, and Claude Code on LCRC"
+author: "Jonathan Ozik"
+format:
+  revealjs:
+    theme: default
+    slide-number: true
+    incremental: false
+---
+
+## Overview {.smaller}
+
+A collection of **user-space** setup kits for working on Argonne's LCRC **Bebop** cluster. No admin required, everything installs into `$HOME`.
+
+Already available in the shared EMEWS project space (no clone needed):
+
+```
+/lcrc/project/EMEWS/bebop_setup_kit
+```
+
+| Piece | What it gives you |
+| --- | --- |
+| `r-quarto-jupyter/` | R 4.5 + Python + Quarto + Jupyter, wired into VSCode |
+| `claude-on-lcrc/` | Claude Code (CLI + VSCode) via `argo-shim` |
+| `agent-bits/` | Batch scripts to run `argo-shim` on a compute node |
+
+::: {.callout-important appearance="simple"}
+The **compute node** is the primary way you'll work. The login node just hosts the persistent `argo-shim` bridge — real analysis runs on a node you request via `agent-bits`.
+:::
+
+::: {.notes}
+Set the stage: everything is user-space, lives in shared EMEWS space, three building blocks. Emphasize early that day-to-day work happens on a compute node — the login-node setup is one-time plumbing. Rest of the deck walks each one, then live demo.
+:::
+
+## `r-quarto-jupyter/` — analysis environment {.smaller}
+
+A reproducible, user-space stack for `.Rmd` / `.qmd` / `.ipynb` work.
+
+- **conda-forge R 4.5** with full graphics (Cairo, png, svglite, ragg, httpgd)
+- **Python 3 + Jupyter + IRkernel**
+- **Quarto 1.9.38** — renders both `.qmd` and `.Rmd`
+- **VSCode** Machine settings + extensions (R, Quarto, Jupyter) for inline plots, Workspace Viewer, kernel pickers
+
+Install (idempotent — safe to re-run):
+
+```bash
+ssh bebop
+cd /lcrc/project/EMEWS/bebop_setup_kit/r-quarto-jupyter
+bash setup_bebop_env.sh
+```
+
+Then: VSCode → Remote-SSH to `bebop` → reload → verify with the `test/` smoke files.
+
+## `claude-on-lcrc/` — login-node setup {.smaller}
+
+One-time plumbing: a persistent `argo-shim` bridge that is the *foundation* for the compute-node workflow.
+
+- **`argo-shim`** bridges Bebop to GCE — install in a Python venv (`module load python`)
+- Runs in a **persistent tmux session** on a single login node (survives disconnects)
+  - Auth via **Duo push** → `✅ All health checks passed`; **note your base port**
+- Point local `~/.ssh/config` at the **specific login node** (`b1`…`b5`)
+- Install Claude: `curl -fsSL https://claude.ai/install.sh | bash`, then **smoke-test** here
+
+::: {.callout-note appearance="simple"}
+Login-node Claude is **only** to confirm the bridge works — don't do real work on shared login nodes.
+:::
+
+::: {.notes}
+Two gotchas to flag live: argo-shim is pinned to one login node, and the base port matters for the compute-node slide. Login-node Claude is verification only.
+:::
+
+## `agent-bits/` — Claude on a compute node {.smaller}
+
+::: {.callout-tip appearance="simple"}
+**This is the main workflow.** Day-to-day, you run Claude here — on a dedicated DIS condo compute node, tunneled through the login-node `argo-shim`.
+:::
+
+- Start a **second** tmux session running a *tunneled* `argo-shim`:
+  ```bash
+  argo-shim --tunnel --tunnel-port <BASE_PORT+2>
+  ```
+- Submit a compute node with the wrapper (pass the login node hosting your tunnel):
+  ```bash
+  /lcrc/project/EMEWS/bebop_setup_kit/agent-bits/submit-argo-shim.sh \
+    beboplogin5.lcrc.anl.gov
+  ```
+- Script waits for the job, then prints the node (also in `~/argo-shim-node.txt`):
+  ```
+  argo-shim node: dis-00NN
+  ```
+- Add a local SSH entry (`bcn`) that **ProxyJumps** through Bebop → connect in VSCode
+
+Ports are derived per-user automatically — nothing to set by hand on the compute side.
+
+## Hands-on demonstration {.smaller}
+
+Putting it together — what we'll walk through live:
+
+0. **Pre-requisites** - GCE account, SSH key on LCRC for accessing Argonne GCE
+1. **Connect** — VSCode Remote-SSH into Bebop
+2. **Analysis env** — open a `.qmd` / `.ipynb`, render a plot inline
+3. **argo-shim** — reattach the tmux session, confirm health checks
+4. **Quick test** — launch Claude via the star icon on the login node, confirm it works
+5. **Compute node (the real workflow)** — submit via `agent-bits`, connect to `bcn`, work here
+
+**Resources**
+- Repo: `github.com/jozik/bebop_setup_kit`
+- In place on Bebop: `/lcrc/project/EMEWS/bebop_setup_kit`
+- Questions: jozik@anl.gov
