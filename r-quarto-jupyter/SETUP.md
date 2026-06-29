@@ -182,6 +182,14 @@ Click the R terminal tab to make it the *active* terminal, then run again. This 
 because the `r.alwaysUseActiveTerminal: true` setting (which we want, for other
 reasons) makes Run Cell follow whichever terminal is focused.
 
+### Status bar shows "R: (not attached)" / "Run Cell" does nothing
+
+You haven't opened an R terminal yet. The session watcher only attaches once you
+launch R via the Command Palette → **`R: Create R Terminal`** (not a plain bash
+terminal). Until a session is attached, there's nowhere for **Run Cell** to send
+the chunk, so clicking it appears to do nothing. Open the R terminal and the
+status bar flips to **"R: (attached)"**; Run Cell then works.
+
 ### Workspace Viewer is empty even though I'm in R
 
 You launched R from a bash terminal instead of via `R: Create R Terminal`. Close
