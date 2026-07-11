@@ -1,10 +1,11 @@
 # Running Claude Code on LCRC Bebop via argo-shim
 
-This guide walks through setting up `argo-shim` on LCRC Bebop so you can use Claude Code (CLI and the VS Code plugin) through Argonne GCE resources. Sections 1–6 cover the **login-node** workflow. Once you've tested that Claude works via command line and the VSCode plugin, Section 7 extends the setup to how you will most often use this capability on a **compute node**.
+This guide walks through setting up `argo-shim` on LCRC Bebop so you can use Claude Code (CLI and the VS Code plugin) through Argonne GCE resources. Sections 1–6 cover the **login-node** workflow. The login node is both where you verify the bridge and where you run Claude to submit and manage batch jobs (see §6), since scheduler commands only work from a login node. Section 7 then extends the setup to a **compute node**, where you'll do heavy interactive analysis.
 
 ## Summary
 - You will set up two tmux sessions (these are persistent sessions that will run on a bebop login node).
 - Then, whenever you need to invoke Claude to do analysis on a compute node, you'll submit a job to grab a dis condo node and ssh into that via VSCode's Remote capability.
+- Run Claude on a **login node** when you want it to submit and manage batch jobs (`qsub` / `qstat` / `qdel` work from login nodes but not from inside a compute-node job), and on a **compute node** for heavy interactive analysis.
 
 ## Prerequisites
 
@@ -164,6 +165,16 @@ claude         # should NOT prompt you to log into Anthropic
 4. Open any file, then click the orange Claude star icon in the editor toolbar (top-right of the open file) to launch the plugin.
 
    ![Claude star icon in the VS Code editor toolbar](images/vscode-claude-star-icon.png)
+
+### Login-node use case: let Claude submit and manage batch jobs
+
+Running Claude on the login node is not only for verifying the bridge. It is also the place to let Claude drive the **PBS batch workflow**, because Bebop's scheduler commands (`qsub`, `qstat`, `qdel`) work from a login node but **not** from inside a compute-node job. From a login-node Claude session you can have it:
+
+- write and edit `.qsub` / job scripts,
+- submit jobs with `qsub` and monitor them with `qstat -u $USER`,
+- inspect job output (`.o` / `.e` files) and iterate, or cancel with `qdel`.
+
+The two workflows are complementary: use a **login-node** session when you want Claude to orchestrate HPC jobs, and a **compute-node** session (Section 7) for heavy interactive analysis. Job submission and monitoring are lightweight, so this is an appropriate use of the shared login nodes.
 
 ## 7. Use Claude Code on a compute node
 
