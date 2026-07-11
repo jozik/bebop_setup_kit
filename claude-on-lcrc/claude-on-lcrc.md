@@ -43,6 +43,16 @@ source argovenv/bin/activate
 
 A tmux session keeps `argo-shim` running after you disconnect.
 
+**Scripted (recommended).** [`start-argo-shim.sh`](start-argo-shim.sh) does all of the manual steps below in one go: it creates the `argo-shim` tmux session, activates the venv, loads your SSH key into an agent (prompting for the passphrase), and starts `argo-shim`, attaching you to the session so you can approve the Duo push.
+
+```bash
+/lcrc/project/EMEWS/bebop_setup_kit/claude-on-lcrc/start-argo-shim.sh
+```
+
+Re-running it just reattaches, it will not start a second shim.
+
+**Manual equivalent**, if you prefer to run the steps yourself:
+
 ```bash
 tmux new -s argo-shim                 # new session named "argo-shim"
 source argovenv/bin/activate          # make argo-shim visible
@@ -56,7 +66,7 @@ argo-shim                              # start it
 
 `argo-shim` will create an SSH tunnel to the CELS hosts and prompt for Duo two-factor authentication. Approve the push, then wait for `✅ All health checks passed`.
 
-> **Note your base port now.** Near the top of the startup output, `argo-shim` prints a line like `Creating SSH tunnel on port <BASE_PORT>...`. `argo-shim` derives this port from your username (it's different for every user). Jot it down — you'll need it later if you run Claude Code on a compute node (Section 7).
+> **Ports are per-user.** `argo-shim` derives its ports from your username (different for every user) and prints them at startup, e.g. `Derived port <N> from username` (the shim port) and a `Creating SSH tunnel on port ...` line. You don't need to record these: the Section 7 script derives them for you. You'd only need `<N>` if you start the tunnel by hand (see Section 7).
 
 ![argo-shim health-check output in tmux](images/argo-shim-health-check.png)
 
@@ -161,14 +171,22 @@ To run Claude Code on a Bebop **compute node** (e.g., for heavier workloads), ch
 
 ### Prerequisite: start a tunneled argo-shim on the login node
 
-In addition to the regular `argo-shim` from Section 3, start a **second** tmux session on the same login node for the tunneled instance. Use the **base port you noted in Section 3, plus 2**, as the `--tunnel-port`:
+In addition to the regular `argo-shim` from Section 3, start a **second** tmux session on the same login node for the tunneled instance. The easiest way is the same script with `--tunnel`, which creates the `argo-shim-tunnel` session and derives the tunnel port for you (`shim_port + 1`):
+
+```bash
+/lcrc/project/EMEWS/bebop_setup_kit/claude-on-lcrc/start-argo-shim.sh --tunnel
+```
+
+Approve the Duo push, wait for `Tunnel created on port <PORT>`, then detach with `Ctrl-b d`.
+
+**Manual equivalent**, if you prefer. `argo-shim` derives the shim port but *not* the tunnel port, so pass `--tunnel-port` explicitly as the `Derived port <N>` value plus one (the same port the compute-node job computes, so the two ends meet):
 
 ```bash
 tmux new -s argo-shim-tunnel
 source argovenv/bin/activate
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_ed25519
-argo-shim --tunnel --tunnel-port <BASE_PORT+2>
+argo-shim --tunnel --tunnel-port <N+1>
 ```
 
 Detach with `Ctrl-b d`.
