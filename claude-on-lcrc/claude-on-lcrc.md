@@ -11,6 +11,7 @@ This guide walks through setting up `argo-shim` on LCRC Bebop so you can use Cla
 - A GCE account. See: <https://help.cels.anl.gov/docs/linux/gce-accounts/>
   - You may need to wait a few minutes to make sure your home directory on GCE is setup before continuing
 - An SSH key on LCRC for accessing Argonne GCE resources. See: <https://help.cels.anl.gov/docs/linux/ssh/>
+  - Add SSH public key to your accounts.cels.anl.gov profile
   - Test access to GCE from Bebop or your local machine before continuing: `ssh -J <your argonne username>@logins.cels.anl.gov <your argonne username>@homes.cels.anl.gov`
 - SSH access to Bebop.
 
