@@ -120,7 +120,7 @@ Create the directory once so SSH has somewhere to put the control sockets:
 mkdir -p ~/.ssh/.control_channels
 ```
 
-With multiplexing, the first authenticated connection through the gateway opens a master socket, and later connections (a second terminal, a VSCode Remote-SSH window, the second `argo-shim` session) reuse it. That means you approve Duo once and every subsequent hop rides the same master, so you are not re-prompted for each session.
+With multiplexing, the first connection you open from your machine through the gateway authenticates normally and leaves a master socket behind. Later connections from your machine reuse that socket: a second terminal, an `scp` or `rsync`, a VSCode Remote-SSH window. You authenticate once, and those additional sessions attach without prompting again.
 
 **The gateway jump host (`login-gce`):**
 
