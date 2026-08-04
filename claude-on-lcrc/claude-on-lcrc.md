@@ -101,7 +101,41 @@ To scroll back through the `argo-shim` output (e.g., to inspect earlier requests
 
 ## 4. Configure SSH to target the specific login node
 
-Add entries to your local `~/.ssh/config` so you can reach the exact login node where `argo-shim` is running.
+Add entries to your local `~/.ssh/config` so you can reach the exact login node where `argo-shim` is running. Bebop is reached through the CELS gateway (`logins.cels.anl.gov`), so every entry below jumps through a `login-gce` host that you also define here.
+
+**Top of the file — shared connection multiplexing:**
+
+Put these lines near the top of `~/.ssh/config`, before any `Host` blocks, so they apply to every connection:
+
+```sshconfig
+IgnoreUnknown UseKeychain
+ControlPath ~/.ssh/.control_channels/%h:%p:%r
+```
+
+`UseKeychain yes` (used in the entries below) is a macOS feature that stores your key passphrase in the login Keychain. It is not a valid keyword on non-macOS OpenSSH, where older builds will error out on it. `IgnoreUnknown UseKeychain` makes SSH silently skip the keyword when it is not recognized, so the same config works on both macOS and Linux. On macOS it takes effect as usual; on Linux it is ignored.
+
+Create the directory once so SSH has somewhere to put the control sockets:
+
+```bash
+mkdir -p ~/.ssh/.control_channels
+```
+
+With multiplexing, the first authenticated connection through the gateway opens a master socket, and later connections (a second terminal, a VSCode Remote-SSH window, the second `argo-shim` session) reuse it. That means you approve Duo once and every subsequent hop rides the same master, so you are not re-prompted for each session.
+
+**The gateway jump host (`login-gce`):**
+
+This is the host every Bebop entry jumps through with `ProxyJump login-gce`. `ControlMaster auto` plus `ControlPersist yes` keep the authenticated master alive in the background after your first login.
+
+```sshconfig
+Host login-gce
+    HostName logins.cels.anl.gov
+    User <your-username>
+    IdentityFile ~/.ssh/<your-gce-private-key>
+    ControlMaster auto
+    ControlPersist yes
+    LogLevel FATAL
+    UseKeychain yes
+```
 
 **Generic Bebop entry:**
 
