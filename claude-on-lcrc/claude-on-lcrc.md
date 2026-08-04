@@ -52,6 +52,12 @@ A tmux session keeps `argo-shim` running after you disconnect.
 
 Re-running it just reattaches, it will not start a second shim.
 
+If you already know you want the compute-node workflow too, `--all` starts both this session and the Section 7 tunnel in one pass, asking for your key passphrase once and Duo once:
+
+```bash
+/lcrc/project/EMEWS/bebop_setup_kit/claude-on-lcrc/start-argo-shim.sh --all
+```
+
 **Manual equivalent**, if you prefer to run the steps yourself:
 
 ```bash
@@ -223,6 +229,8 @@ In addition to the regular `argo-shim` from Section 3, start a **second** tmux s
 ```
 
 Approve the Duo push, wait for `Tunnel created on port <PORT>`, then detach with `Ctrl-b d`.
+
+If the Section 3 shim is already running in the same login session, this second one reuses the authentication it established and comes up without a fresh Duo prompt. That is what lets `start-argo-shim.sh --all` bring up both sessions with a single approval. It starts them in sequence for exactly this reason, since two shims authenticating at once can each raise their own Duo prompt.
 
 **Manual equivalent**, if you prefer. `argo-shim` derives the shim port but *not* the tunnel port, so pass `--tunnel-port` explicitly as the `Derived port <N>` value plus one (the same port the compute-node job computes, so the two ends meet):
 
