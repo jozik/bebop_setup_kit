@@ -1,16 +1,15 @@
+# Render artifacts (qmd/Rmd/md -> html/pdf + supporting dirs). No .html is
+# tracked in this repo, so these are safe to ignore repo-wide.
+*.html
+*_files/
+.quarto/
+/_site/
+
 # Render outputs from smoke tests
-r-quarto-jupyter/test/*.html
-r-quarto-jupyter/test/*_files/
 r-quarto-jupyter/test/smoke_out.ipynb
 r-quarto-jupyter/test/smoke_r_out.ipynb
 r-quarto-jupyter/test/Rplots.pdf
-
-# Quarto render artifacts (qmd/Rmd -> html/pdf + supporting dirs)
-tutorial/*.html
 tutorial/*.pdf
-tutorial/*_files/
-.quarto/
-/_site/
 
 # PBS job output/error logs (argo-shim submit jobs land here when run in place)
 *.o[0-9]*
