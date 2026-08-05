@@ -278,3 +278,26 @@ Host bcn
 ### Connect from VS Code
 
 In VS Code's Remote Explorer, connect to `bcn`. Then follow the same Open Folder + Claude star icon steps from Section 6.
+
+> **First connection to a new DIS node prompts for the host key.** Your job lands on a different `dis-00NN` each time, so the first time you reach a given node VS Code opens a small input box containing the SSH host authenticity prompt:
+>
+> ```
+> The authenticity of host 'dis-0003 (<no hostip for proxy command>)' can't be established.
+> RSA key fingerprint is: SHA256:...
+> This host key is known by the following other names/addresses:
+>     ~/.ssh/known_hosts:141: dis-0001
+>     ~/.ssh/known_hosts:142: dis-0005
+> Are you sure you want to continue connecting (yes/no/[fingerprint])?
+> ```
+>
+> Type the full word `yes` and press Enter. Pressing Escape, or answering anything else, fails the connection with an error that does not make the cause obvious. The part about the key being "known by the following other names" is expected rather than a warning sign, because the DIS condo nodes share a host key, so you have already trusted this same key under a different node name.
+
+To stop being asked on every new node, add `StrictHostKeyChecking accept-new` to the `bcn` entry. That accepts a node you have not seen before without prompting, while still refusing to connect if a key you already trust ever changes:
+
+```sshconfig
+Host bcn
+    HostName dis-00NN
+    ProxyJump b
+    StrictHostKeyChecking accept-new
+    ...
+```
